@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <!-- 1.导入vue包 -->
+    <script src="/lib/vue.js"></script>
+</head>
+
+<body>
+    <!-- 2.创建一个要控制的区域 -->
+    <div id="app">
+        <input type="button" value="浪起来" @click='lang'>
+        <input type="button" value='别浪' @click='stop'>
+        <h4>{{msg}}</h4>
+    </div>
+
+    <script>
+        //在vm实例中，想要获取data上的数据，或者调用methods中的方法，必须通过this.数据属性名 或this.方法名来进行访问。这里的this就表示我们new出来的vm实例对象
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                msg: '猥琐发育，别浪~~！',
+                intervalId:null //在data上定义 定时器ID
+            },
+            methods: {
+                lang() {
+                    //console.log(this.msg)
+                    //获取头第一个字符
+                    //箭头函数内部的this和外部的this保持一致
+
+                    if(this.intervalId!=null) return //防止不停点击按钮 不停添加定时器
+                    this.intervalId=setInterval(() => {
+                        var start = this.msg.substring(0, 1)
+                        //获取剩余所有字符
+                        var end = this.msg.substring(1)
+                        // 重新拼接
+                        this.msg = end + start
+                    },400)
+
+
+                    //vm实例，会监听自己身上data中所有数据的改变，只要数据一发生改变，就会自动把最新的数据，从data上同步到页面中去【好处：只需要关心数据，不需要考虑如何重新渲染dom页面】
+                },
+                stop(){
+                    clearInterval(this.intervalId)
+                    this.intervalId=null 
+                    //若不恢复intervalId为null 则this.intervalId在定时器被终止后依然为null 再次点击lang按钮 无法添加新的定时器
+                }
+            }
+        })
+
+        //分析：
+        //1.给【浪起来】按钮，绑定一个点击事件 v-on @
+        //2.在按钮事件处理函数中，写相关业务逻辑：拿到msg字符串，然后调用substr进行字符串截取，截取第一个字符放到字符串最后
+        //3.实现自动截取，把2步骤放到定时器中
+    </script>
+</body>
+
+</html>
